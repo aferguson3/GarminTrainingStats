@@ -1,7 +1,10 @@
 import dataclasses
+import logging
 from dataclasses import dataclass
 
 from backend.src.models.ExerciseSet import ExerciseSet
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -90,10 +93,17 @@ class Workout:
 
     def set_data_validation_check(self):
         # checks if set data is incomplete
+        self.isIncomplete = False
+        errors = 0
         for currSet in self.sets:
-            self.isIncomplete = False
             if currSet.exerciseName is None or currSet.targetReps is None:
                 self.isIncomplete = (
                     True  # TODO: cross-reference scheduled workouts and fix errors
                 )
-                return
+                logger.debug(
+                    f"FAIL: ID:{self.activityId} date={self.datetime} "
+                    f"Exercise={currSet.exerciseName} targetReps={currSet.targetReps} stepIndex={currSet.stepIndex}"
+                )
+                errors = errors + 1
+        if errors > 0:
+            logger.debug(f"ID: {self.activityId} date={self.datetime} Errors: {errors}")

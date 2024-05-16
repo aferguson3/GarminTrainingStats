@@ -5,8 +5,8 @@ from backend.src import show_graph
 from backend.src.garmin_interaction import client_auth, run_service
 from backend.src.utils import set_params_by_weeks
 
-DATA_FILEPATH = str(pathlib.Path("./data/workout_data.json").resolve())
-METADATA_FILEPATH = "./data/workout_metadata.json"
+DATA_FILEPATH = str(pathlib.Path("./data/workout_data_TEST.json").resolve())
+# METADATA_FILEPATH = "./data/workout_metadata.json"
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -15,8 +15,8 @@ logging.basicConfig(level=logging.INFO)
 
 def main():
     client_auth()
-    startDate = "2024-01-01"
-    weeks_of_workouts = 10
+    startDate = "2023-01-01"
+    weeks_of_workouts = 16
 
     params = set_params_by_weeks(weeks_of_workouts, startDate)
     menu = (

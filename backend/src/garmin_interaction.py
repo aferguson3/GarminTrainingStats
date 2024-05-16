@@ -9,6 +9,7 @@ from typing import Tuple
 
 import garth
 from dotenv import dotenv_values
+from garth.exc import GarthHTTPError
 
 from backend.src.WorkoutManagement import WorkoutManagement as Manager
 from backend.src.models import Workout, ExerciseSet
@@ -64,7 +65,11 @@ def get_activities(params: dict) -> Tuple[list[int], list[str]]:
     return activityIds, activityDatetimes
 
 
-def get_workouts(activityIds: list, activityDatetimes: list) -> list[Workout]:
+def get_workouts(
+    activityIds: list, activityDatetimes: list, threading=True
+) -> list[Workout]:
+    if threading:
+        return get_workouts(activityIds, activityDatetimes, list, threading=threading)
     threads = []
     splice = int(len(activityIds) / NUM_THREADS)
     workouts_rv = []
@@ -94,7 +99,9 @@ def get_workouts(activityIds: list, activityDatetimes: list) -> list[Workout]:
     return workouts_rv
 
 
-def _get_workouts(activityDatetimes: list, activityIds: list | int) -> None:
+def _get_workouts(
+    activityDatetimes: list, activityIds: list | int, threading=True
+) -> None | list[Workout]:
     totalWorkouts = list()  # most recent workouts stored first
     if isinstance(activityDatetimes, str):
         activityDatetimes = [activityDatetimes]
@@ -135,6 +142,9 @@ def _get_workouts(activityDatetimes: list, activityIds: list | int) -> None:
         a_workout.datetime = _datetime
         a_workout.sets = all_workout_sets
         totalWorkouts.append(a_workout)
+    if threading:
+        return totalWorkouts
+
     q.put(totalWorkouts)
     q.task_done()
 
@@ -169,8 +179,10 @@ def _isWarmupSet(garmin_exercise_set: dict) -> bool:
 
 
 @timer
-def fill_out_workouts(workouts: list[Workout]) -> list[Workout]:
+def fill_out_workouts(workouts: list[Workout], threading=True) -> list[Workout]:
     # Fills out targetReps and missing exerciseNames using scheduled workout info
+    if not threading:
+        return _fill_out_workouts(workouts, threading=False)
     threads = []
     splice = int(len(workouts) / NUM_THREADS)
     workouts_rv = []
@@ -198,44 +210,62 @@ def fill_out_workouts(workouts: list[Workout]) -> list[Workout]:
     return workouts_rv
 
 
-def _fill_out_workouts(workouts: list[Workout] | Workout):
+def _fill_out_workouts(
+    workouts: list[Workout] | Workout, threading=True
+) -> None | list[Workout]:
     if isinstance(workouts, Workout):
         workouts = [workouts]
+    workouts_copy = workouts.copy()
 
-    for wo in workouts:
-        garmin_data = garth.connectapi(
+    for wo in workouts_copy:
+        garmin_data: list = garth.connectapi(
             f"{Endpoints.garmin_connect_activity}/{wo.activityId}/workouts"
         )
-        if garmin_data is None:  # TODO: ???? WHY
-            print(f"{wo.datetime}")
+        if not garmin_data:  # No planned workout --> remove workout
+            workouts.remove(wo)
             continue
-        garmin_data = garmin_data[0]
-        wo = _get_workout_name(wo)
 
+        wo_ = _get_workout_name(wo)
+        if wo_ is None or wo_.name is None:
+            logger.debug(f"Removing ID: {wo.activityId}")
+            workouts.remove(wo)
+            continue
+        else:
+            wo = wo_
+
+        garmin_data = garmin_data[0]
         for currSet in wo.sets:
-            currStepIndex = currSet.stepIndex
-            if currStepIndex is None:
+            curr_step_index = currSet.stepIndex
+            if curr_step_index is None:
                 continue  # Ignores unscheduled exercises w/o stepIndex
-            currSet.targetReps = int(
-                garmin_data["steps"][currStepIndex]["durationValue"]
-            )
+            _temp = garmin_data["steps"][curr_step_index]["durationValue"]
+            currSet.targetReps = int(_temp) if _temp is not None else None
             if currSet.exerciseName is None:
-                newName = garmin_data["steps"][currStepIndex]["exerciseName"]
-                newCategory = garmin_data["steps"][currStepIndex]["exerciseCategory"]
-                currSet.exerciseName = newName if newName is not None else newCategory
+                new_name = garmin_data["steps"][curr_step_index]["exerciseName"]
+                new_category = garmin_data["steps"][curr_step_index]["exerciseCategory"]
+                currSet.exerciseName = (
+                    new_name if new_name is not None else new_category
+                )
+    if not threading:
+        return workouts
     q.put(workouts)
     q.task_done()
 
 
-def _get_workout_name(workout: Workout):
+def _get_workout_name(workout: Workout) -> Workout | None:
     pattern = r"\b\d+(?:\.\d+)+\b"
-    garmin_data = garth.connectapi(
-        f"{Endpoints.garmin_connect_activity}/{workout.activityId}"
-    )
+    try:
+        garmin_data = garth.connectapi(
+            f"{Endpoints.garmin_connect_activity}/{workout.activityId}"
+        )
+    except GarthHTTPError:
+        return
+
     workout_name_str = garmin_data["activityName"]
     version_str = re.search(pattern, workout_name_str)
     version_str = version_str.group() if version_str is not None else None
     workout_name = re.sub(pattern, "", workout_name_str).strip()
+
     workout.version = version_str
     workout.name = workout_name
     return workout
@@ -247,28 +277,28 @@ def run_service(
     if load is True:
         _filepath_validation(filepath)
         workouts = Manager.load_workouts(filepath)
-        workouts_ = Manager.sort_workouts(workouts, "datetime")
+        workouts_filled = Manager.sort_workouts(workouts, "datetime")
     else:
         IDs, dates = get_activities(params)
         workouts = get_workouts(IDs, dates)
         if len(workouts) == 0:
             return
-        workouts_filled = fill_out_workouts(workouts)
-        workouts_ = Manager.sort_workouts(workouts_filled, "datetime")
+
+        workouts_filled = fill_out_workouts(workouts, threading=False)
+        workouts_filled = Manager.sort_workouts(workouts_filled, "datetime")
         if backup is True:
             _filepath_validation(filepath)
-            Manager.dump_to_json(Manager.workouts_to_dict(workouts_), filepath, "w")
-
-    Manager.list_incomplete_workouts(workouts_)
+            Manager.dump_to_json(
+                Manager.workouts_to_dict(workouts_filled), filepath, "w"
+            )
+    Manager.list_incomplete_workouts(workouts_filled)
     logger.info(
-        f"Num of workouts: {len(workouts_)}, Workout 0: {workouts_[0].name} {workouts_[0].version}"
-        f"\n\tset 3: {workouts_[0].view_sets()[3]}"
+        f"Num of workouts: {len(workouts_filled)}, Workout 0: {workouts_filled[0].name} {workouts_filled[0].version}"
+        f"\n\tset 3: {workouts_filled[0].view_sets()[3]}"
     )
-    return workouts_
+    return workouts_filled
 
 
 def _filepath_validation(filepath):
     if type(filepath) is not str:
         raise TypeError(f"{filepath} is invalid filepath.")
-    # if not pathlib.Path(filepath).exists():
-    #     raise FileNotFoundError(f"{filepath} was not found.")
