@@ -126,27 +126,28 @@ class WorkoutManagement:
     def list_incomplete_workouts(workouts: list[Workout]):
         incomplete_workouts = []
         versionless_workouts = []
-
+        untracked_workouts = []
         for wo in workouts:
             wo.set_data_validation_check()
+            cur_date = ""
+            if "T" in wo.datetime:
+                cur_date = wo.datetime.split("T")[0]
+            elif " " in wo.datetime:
+                cur_date = wo.datetime.split(" ")[0]
+
             if wo.isIncomplete or wo.name is None:
-                if "T" in wo.datetime:
-                    cur_date = wo.datetime.split("T")[0]
-                    incomplete_workouts.append(cur_date)
-                elif " " in wo.datetime:
-                    cur_date = wo.datetime.split(" ")[0]
-                    incomplete_workouts.append(cur_date)
+                incomplete_workouts.append(cur_date)
             if wo.version is None:
-                if "T" in wo.datetime:
-                    cur_date = wo.datetime.split("T")[0]
-                    versionless_workouts.append(cur_date)
-                elif " " in wo.datetime:
-                    cur_date = wo.datetime.split(" ")[0]
-                    versionless_workouts.append(cur_date)
+                versionless_workouts.append(cur_date)
+            if wo.category == "UNTRACKED":
+                untracked_workouts.append(cur_date)
 
         logger.info(
             f"{len(incomplete_workouts)} Incomplete workouts: {incomplete_workouts}"
         )
         logger.info(
             f"{len(versionless_workouts)} Version-less workouts: {versionless_workouts}"
+        )
+        logger.info(
+            f"{len(untracked_workouts)} Untracked workouts: {untracked_workouts}"
         )

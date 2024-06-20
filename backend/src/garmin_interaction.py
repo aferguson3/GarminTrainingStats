@@ -255,13 +255,29 @@ def run_service(
             return
         workouts_filled = fill_out_workouts(workouts)
         workouts_ = Manager.sort_workouts(workouts_filled, "datetime")
+        workouts_ = set_tracking_status(workouts_)
         if backup is True:
             filepath_validation(filepath)
             Manager.dump_to_json(Manager.workouts_to_dict(workouts_), filepath, "w")
 
     Manager.list_incomplete_workouts(workouts_)
     logger.info(
-        f"Num of workouts: {len(workouts_)}, Workout 0: {workouts_[0].name} {workouts_[0].version}"
+        f"Num of workouts: {len(workouts_)}, Workout 0: {workouts_[0].name} {workouts_[0].version} {workouts_[0].category}"
         f"\n\tset 3: {workouts_[0].view_sets()[3]}"
     )
     return workouts_
+
+
+def set_tracking_status(workouts: list[Workout]) -> list[Workout]:
+    # Determines what workouts are graphed
+    for entry in workouts:
+        if (
+            entry.version is None
+            or "LIGHT" in str(entry.name).upper()
+            or "NOT HEAVY" in str(entry.name).upper()
+            or "REST" in str(entry.name).upper()
+        ):
+            entry.category = "UNTRACKED"
+        else:
+            entry.category = "TRACKED"
+    return workouts

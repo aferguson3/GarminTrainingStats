@@ -25,7 +25,7 @@ admin_bp = Blueprint("admin_bp", __name__, url_prefix="/admin")
 @admin_bp.route("/clefairy")
 def clear_db():
     db.drop_all()
-    return render_template("base.html", body="Empty")
+    return render_template("base.html", body="DB Emptied")
 
 
 @admin_bp.route("/caterpie", methods=["GET", "POST"])

@@ -18,7 +18,7 @@ from backend.server.models import WorkoutDB
 from backend.server.models.ExerciseDB import ExerciseDB
 from backend.server.models.FormFields import CategoryField
 from backend.server.routes.database import new_workout_entries
-from backend.server.utils import get_dataframe
+from backend.server.utils import get_sets_df
 from backend.server.utils.utils import get_exercise_info
 from backend.src.dataframe_accessors import (
     list_available_exercises,
@@ -27,6 +27,8 @@ from backend.src.dataframe_accessors import (
 from backend.src.garmin_interaction import run_service
 from backend.src.utils import set_params_by_weeks
 from backend.src.utils import timer
+
+GRAPH_FILE = pathlib.Path.cwd() / "templates" / "plotly_graph.html"
 
 logger = logging.getLogger(__name__)
 service_bp = Blueprint(
@@ -78,21 +80,23 @@ def service():
 
 @service_bp.route("/graph", methods=["GET", "POST"])
 def setup_graph():
-    df = get_dataframe()
+    df = get_sets_df()
     buffer = io.StringIO()
     df.info(memory_usage=True, buf=buffer)
     logger.info(f"df memory usage: {buffer.getvalue()}")
 
     categories_field = CategoryField()
-    categorized_exercises: list[ExerciseDB] = (
+    exerciseDB_entries: list[ExerciseDB] = (
         (db.session.execute(select(ExerciseDB))).scalars().all()
     )
     exercise_categories = {
         _dict["exerciseName"]: _dict["category"]
-        for _dict in [_exerciseDB.get_dict() for _exerciseDB in categorized_exercises]
+        for _dict in [
+            exercise_entry.get_dict() for exercise_entry in exerciseDB_entries
+        ]
     }
-    all_exercises = list_available_exercises(df)
-    exercise_info = get_exercise_info(all_exercises, df, exercise_categories)
+    all_exercise_names = list_available_exercises(df)
+    exercise_info = get_exercise_info(all_exercise_names, df, exercise_categories)
 
     if categories_field.is_submitted():
         if any(
@@ -114,10 +118,9 @@ def setup_graph():
 
 @service_bp.route("/graph/show", methods=["GET"])
 def show_graph():
-    GRAPH_FILE = pathlib.Path.cwd() / "templates" / "plotly_graph.html"
     exercise = session["exercise"]
     reps = float(session["reps"]) if session["reps"] != "None" else None
     plot_dataframe(
-        get_dataframe(), exercise, reps, flask_mode=True, filepath=str(GRAPH_FILE)
+        get_sets_df(), exercise, reps, flask_mode=True, filepath=str(GRAPH_FILE)
     )
     return render_template("plotly_graph.html")

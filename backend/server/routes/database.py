@@ -44,10 +44,11 @@ def new_workout_entries(workouts: list[Workout]):
     if not isinstance(workouts[0], Workout):
         raise ValueError(f"{type(workouts[0])} is not type Workout")
 
-    cache.delete("get_dataframe")
+    cache.delete("get_sets_df")
     workoutsDB = WorkoutDB.list_to_workoutsDB(workouts)
+
     for wo in workoutsDB:
-        if not _isNewWorkoutEntry(wo):
+        if not _isNewWorkoutEntry(wo) or wo.category == "UNTRACKED":
             continue
         db.session.add(wo)
     db.session.commit()

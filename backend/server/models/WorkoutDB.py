@@ -30,7 +30,7 @@ class WorkoutDB(db.Model):
 
     def __repr__(self):
         return (
-            f"{self.name} {self.version} {self.datetime} actID:{self.activityId}, isIncomplete:{self.isIncomplete} "
+            f"{self.name} {self.version} {self.datetime} actID:{self.activityId}, {self.category} isIncomplete:{self.isIncomplete} "
             f"\nsets:{self.sets}"
         )
 

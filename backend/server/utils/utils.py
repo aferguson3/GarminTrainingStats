@@ -42,11 +42,12 @@ def _get_dataframe_index() -> list[Tuple]:
 
 
 @cache.cached(key_prefix="sets_df")
-def get_dataframe() -> pandas.DataFrame:
+def get_sets_df() -> pandas.DataFrame:
     sets_df = pd.read_sql(
-        "exercise_sets",
+        "select * FROM exercise_sets WHERE category == :category",
         db.session.connection(),
         parse_dates={"startTime": "%H:%M:%S", "date": "%m/%d/%y"},
+        params={"category": "TRACKED"},
     )
     index_df = pd.MultiIndex.from_tuples(
         _get_dataframe_index(), names=["Dates", "Sets"]

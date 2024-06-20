@@ -7,7 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
 
 IN_MEMORY = False
-TEST_DB = False
+TEST_DB = True
 DEBUG = True
 BASEDIR = pathlib.Path.cwd()
 DB_URI = "sqlite:///" + str(BASEDIR / "data" / "workouts.db")
