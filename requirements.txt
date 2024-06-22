@@ -32,7 +32,9 @@ packaging==24.0
 pandas==2.2.2
 pathspec==0.12.1
 pillow==10.2.0
+pipdeptree==2.19.1
 platformdirs==4.2.1
+plotly==5.22.0
 pluggy==1.4.0
 pydantic==2.6.4
 pydantic_core==2.16.3
@@ -49,6 +51,7 @@ requests-oauthlib==1.4.0
 setuptools==69.2.0
 six==1.16.0
 SQLAlchemy==2.0.29
+tenacity==8.3.0
 types-pytz==2024.1.0.20240203
 typing_extensions==4.10.0
 tzdata==2024.1

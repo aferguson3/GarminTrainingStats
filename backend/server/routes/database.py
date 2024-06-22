@@ -48,7 +48,7 @@ def new_workout_entries(workouts: list[Workout]):
     workoutsDB = WorkoutDB.list_to_workoutsDB(workouts)
 
     for wo in workoutsDB:
-        if not _isNewWorkoutEntry(wo) or wo.category == "UNTRACKED":
+        if not _isNewWorkoutEntry(wo):
             continue
         db.session.add(wo)
     db.session.commit()

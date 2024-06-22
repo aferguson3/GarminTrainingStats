@@ -13,11 +13,9 @@ from backend.src.dataframe_accessors import get_rep_ranges
 logger = logging.getLogger(__name__)
 
 
-def _get_dataframe_index() -> list[Tuple]:
+def _get_dataframe_index(workout_ids: list) -> list[Tuple]:
     index_2d: list[Tuple] = []
-    workout_ids = (
-        db.session.execute(select(ExerciseSetDB.workout_id)).scalars().unique().all()
-    )
+    workout_ids = list(set(workout_ids))
 
     for cur_workout_id in workout_ids:
         cur_workout_date = db.session.execute(
@@ -44,13 +42,13 @@ def _get_dataframe_index() -> list[Tuple]:
 @cache.cached(key_prefix="sets_df")
 def get_sets_df() -> pandas.DataFrame:
     sets_df = pd.read_sql(
-        "select * FROM exercise_sets WHERE category == :category",
+        "select es.* FROM exercise_sets es JOIN workouts w on es.workout_id = w.id where w.category == 'TRACKED'",
         db.session.connection(),
         parse_dates={"startTime": "%H:%M:%S", "date": "%m/%d/%y"},
         params={"category": "TRACKED"},
     )
     index_df = pd.MultiIndex.from_tuples(
-        _get_dataframe_index(), names=["Dates", "Sets"]
+        _get_dataframe_index(sets_df["workout_id"]), names=["Dates", "Sets"]
     )
     sets_df.set_index(index_df, inplace=True)
     return sets_df
