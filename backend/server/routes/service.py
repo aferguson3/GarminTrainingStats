@@ -42,10 +42,10 @@ service_bp = Blueprint(
 @timer
 def service():
     args = request.args
+    weeks_of_workouts = args.get("weeks", default=10, type=int)
     start_date = args.get(
         "startDate", default=None, type=str
     )  # provide start date or use the first date in DB
-    weeks_of_workouts = args.get("weeks", default=10, type=int)
 
     if start_date is None:
         result = (
@@ -123,4 +123,4 @@ def show_graph():
     plot_dataframe(
         get_sets_df(), exercise, reps, flask_mode=True, filepath=str(GRAPH_FILE)
     )
-    return render_template("plotly_graph_data.html")
+    return render_template(GRAPH_FILE.name)

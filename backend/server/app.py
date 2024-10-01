@@ -3,7 +3,7 @@ import logging
 from flask import render_template
 from sqlalchemy.exc import OperationalError
 
-from backend.server import app, db
+from backend.server import db, app
 from backend.server.routes.admin import admin_bp
 from backend.server.routes.database import database_bp
 from backend.server.routes.service import service_bp
@@ -32,19 +32,19 @@ def not_found(*args, **kwargs):
 
 def main():
     with app.app_context():
-        init_db(DB=db, APP=app)
+        init_db(db_=db, app_=app)
         # cache.clear()
     client_auth()
     register_blueprints()
 
 
-def init_db(DB, APP):
+def init_db(db_, app_):
     try:
-        DB.create_all()
-        logger.info(f"DB URI: {APP.config.get('SQLALCHEMY_DATABASE_URI')}")
+        db_.create_all()
+        logger.info(f"DB URI: {app_.config.get('SQLALCHEMY_DATABASE_URI')}")
     except OperationalError:
         raise FileNotFoundError(
-            f"Unable to open DB URI: {APP.config.get('SQLALCHEMY_DATABASE_URI')}"
+            f"Unable to open DB URI: {app_.config.get('SQLALCHEMY_DATABASE_URI')}"
         )
 
 
