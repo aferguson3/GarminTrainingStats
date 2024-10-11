@@ -1,4 +1,4 @@
-from backend.server import db
+from backend.server.config import db
 
 CATEGORY_LIST = sorted(["Arms", "Chest", "Core", "Back", "Legs", "Shoulders"])
 

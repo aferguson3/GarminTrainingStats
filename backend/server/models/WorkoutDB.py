@@ -1,6 +1,6 @@
 import logging
 
-from backend.server import db
+from backend.server.config import db
 from backend.server.models.ExerciseSetDB import ExerciseSetDB
 from backend.src.models import Workout
 

@@ -3,7 +3,7 @@ import logging
 from flask import render_template, Blueprint, request
 from sqlalchemy import select, delete
 
-from backend.server import db
+from backend.server.config import db
 from backend.server.models import ExerciseSetDB, WorkoutDB
 from backend.server.models.ExerciseDB import CATEGORY_LIST
 from backend.server.models.ExerciseDB import ExerciseDB

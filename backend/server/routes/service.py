@@ -13,7 +13,7 @@ from flask import (
 )
 from sqlalchemy import select
 
-from backend.server import db
+from backend.server.config import db
 from backend.server.models import WorkoutDB
 from backend.server.models.ExerciseDB import ExerciseDB
 from backend.server.models.FormFields import CategoryField

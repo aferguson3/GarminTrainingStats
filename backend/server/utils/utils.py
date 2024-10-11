@@ -6,7 +6,7 @@ import pandas
 import pandas as pd
 from sqlalchemy import select, update
 
-from backend.server import db, cache
+from backend.server.config import db, cache
 from backend.server.models import ExerciseSetDB, WorkoutDB
 from backend.src.dataframe_accessors import get_rep_ranges
 

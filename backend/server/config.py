@@ -2,12 +2,34 @@ import logging
 import pathlib
 
 import dotenv
+from flask_caching import Cache
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import OperationalError
 
 BASEDIR = pathlib.Path.cwd()
 DB_URI = "sqlite:///" + str(BASEDIR / "data" / "workouts.db")
 TEST_URI = "sqlite:///" + str(BASEDIR / "data" / "test_workouts.db")
 ENV_PATH = pathlib.Path.cwd().parent.parent / ".env"
 logger = logging.getLogger(__name__)
+
+db = SQLAlchemy()
+cache = Cache(
+    config={
+        "CACHE_TYPE": "SimpleCache",
+        "CACHE_THRESHOLD": 20,
+        "CACHE_DEFAULT_TIMEOUT": 250,
+    }
+)
+
+
+def db_config(db_, app_):
+    try:
+        db_.create_all()
+        logger.info(f"DB URI: {app_.config.get('SQLALCHEMY_DATABASE_URI')}")
+    except OperationalError:
+        raise FileNotFoundError(
+            f"Unable to open DB URI: {app_.config.get('SQLALCHEMY_DATABASE_URI')}"
+        )
 
 
 def _db_uri_selection(uri_type):
@@ -34,10 +56,6 @@ def _db_uri_selection(uri_type):
 
 class BaseConfig(object):
 
-    # Flask Cache
-    CACHE_TYPE = "SimpleCache"
-    CACHE_THRESHOLD = 20
-    CACHE_DEFAULT_TIMEOUT = 250
     SECRET_KEY = dotenv.get_key(str(ENV_PATH), "SECRET_KEY")
 
     def __init__(self, uri_type: str = "MAIN_DB"):
