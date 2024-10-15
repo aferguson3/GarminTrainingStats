@@ -16,13 +16,14 @@ from backend.src.utils import Endpoints
 from backend.src.utils.utils import timer, filepath_validation
 
 logger = logging.getLogger(__name__)
-q = queue.Queue()
+Queue_ = queue.Queue()
 MAX_THREADS = multiprocessing.cpu_count()
 NUM_THREADS = 6
 NUM_THREADS = NUM_THREADS if MAX_THREADS >= NUM_THREADS else multiprocessing.cpu_count()
 
 
 # Assumes Garmin connect user/pass are saved in .env file
+# TODO: create path to enter garmin creds
 def client_auth():
     working_dir = pathlib.Path.cwd().parent.parent
     creds_path = working_dir / "backend" / "creds"
@@ -89,8 +90,8 @@ def get_workouts(activityIds: list, activityDatetimes: list) -> list[Workout]:
 
     for t in threads:
         t.join()
-    while not q.empty():
-        workouts_rv = workouts_rv + q.get()
+    while not Queue_.empty():
+        workouts_rv = workouts_rv + Queue_.get()
     return workouts_rv
 
 
@@ -135,8 +136,8 @@ def _get_workouts(activityDatetimes: list, activityIds: list | int) -> None:
         a_workout.datetime = _datetime
         a_workout.sets = all_workout_sets
         totalWorkouts.append(a_workout)
-    q.put(totalWorkouts)
-    q.task_done()
+    Queue_.put(totalWorkouts)
+    Queue_.task_done()
 
 
 def _format_set_time(
@@ -192,8 +193,8 @@ def fill_out_workouts(workouts: list[Workout]) -> list[Workout]:
 
     for t in threads:
         t.join()
-    while not q.empty():
-        workouts_rv = workouts_rv + q.get()
+    while not Queue_.empty():
+        workouts_rv = workouts_rv + Queue_.get()
 
     return workouts_rv
 
@@ -223,8 +224,8 @@ def _fill_out_workouts(workouts: list[Workout] | Workout):
                 newName = garmin_data["steps"][currStepIndex]["exerciseName"]
                 newCategory = garmin_data["steps"][currStepIndex]["exerciseCategory"]
                 currSet.exerciseName = newName if newName is not None else newCategory
-    q.put(workouts)
-    q.task_done()
+    Queue_.put(workouts)
+    Queue_.task_done()
 
 
 def _get_workout_name(workout: Workout):
@@ -255,7 +256,7 @@ def run_service(
             return
         workouts_filled = fill_out_workouts(workouts)
         workouts_ = Manager.sort_workouts(workouts_filled, "datetime")
-        workouts_ = set_tracking_status(workouts_)
+        workouts_ = _set_tracking_status(workouts_)
         if backup is True:
             filepath_validation(filepath)
             Manager.dump_to_json(Manager.workouts_to_dict(workouts_), filepath, "w")
@@ -268,7 +269,7 @@ def run_service(
     return workouts_
 
 
-def set_tracking_status(workouts: list[Workout]) -> list[Workout]:
+def _set_tracking_status(workouts: list[Workout]) -> list[Workout]:
     # Determines what workouts are graphed
     for entry in workouts:
         if (

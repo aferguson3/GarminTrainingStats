@@ -7,12 +7,19 @@ from flask_sqlalchemy import SQLAlchemy
 
 from backend.server.config import BaseConfig, db_config, DebugConfig
 from backend.server.routes import database_bp, service_bp, admin_bp
+from backend.server.routes.auth import login_bp
 from backend.src import client_auth
 
 logger = logging.getLogger(__name__)
 
 
 def create_app(db: SQLAlchemy, cache: Cache, app_config: BaseConfig | None = None):
+    """
+    :param db:
+    :param cache:
+    :param app_config: Options: BaseConfig, DebugConfig, or ProdConfig
+    :return:
+    """
     app_config = BaseConfig() if app_config is None else app_config
     curr_app = Flask(__name__)
     curr_app.config_class = BaseConfig
@@ -36,3 +43,4 @@ def register_blueprints(app: Flask):
     app.register_blueprint(database_bp)
     app.register_blueprint(service_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(login_bp)

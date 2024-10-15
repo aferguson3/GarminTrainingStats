@@ -8,4 +8,4 @@
 **/creds/*
 /.env
 **/data/*
-**/templates/plotly_graph_data.html
+**/templates/*DATA*.html

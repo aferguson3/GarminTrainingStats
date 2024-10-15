@@ -3,13 +3,13 @@ import logging
 from flask import render_template
 
 from backend.server import create_app
-from backend.server.config import db, cache, BaseConfig
+from backend.server.config import db, cache, DebugConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-app = create_app(db, cache, app_config=BaseConfig())
+app = create_app(db, cache, app_config=DebugConfig("MAIN_DB"))
 
 
 @app.route("/")
