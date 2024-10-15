@@ -10,6 +10,7 @@ from typing import Tuple
 import garth
 from dotenv import dotenv_values
 
+from backend.server.config import APP_DIRECTORY
 from backend.src.WorkoutManagement import WorkoutManagement as Manager
 from backend.src.models import Workout, ExerciseSet
 from backend.src.utils import Endpoints
@@ -24,7 +25,7 @@ NUM_THREADS = NUM_THREADS if MAX_THREADS >= NUM_THREADS else multiprocessing.cpu
 
 # Assumes Garmin connect user/pass are saved in .env file
 def client_auth():
-    working_dir = pathlib.Path.cwd().parent.parent
+    working_dir = APP_DIRECTORY.parents[1]
     creds_path = working_dir / "backend" / "creds"
     env_path = working_dir / ".env"
     try:

@@ -6,7 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
 
 from backend.server.config import BaseConfig, db_config, DebugConfig
-from backend.server.routes import database_bp, service_bp, admin_bp
+from backend.server.routes import database_bp, service_bp, admin_bp, statues_bp
 from backend.src import client_auth
 
 logger = logging.getLogger(__name__)
@@ -36,3 +36,4 @@ def register_blueprints(app: Flask):
     app.register_blueprint(database_bp)
     app.register_blueprint(service_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(statues_bp)

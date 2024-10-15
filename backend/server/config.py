@@ -6,10 +6,11 @@ from flask_caching import Cache
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
-BASEDIR = pathlib.Path.cwd()
-DB_URI = "sqlite:///" + str(BASEDIR / "data" / "workouts.db")
-TEST_URI = "sqlite:///" + str(BASEDIR / "data" / "test_workouts.db")
-ENV_PATH = pathlib.Path.cwd().parent.parent / ".env"
+APP_DIRECTORY = pathlib.Path(__file__).parent.resolve()
+DB_URI = "sqlite:///" + str(APP_DIRECTORY / "data" / "workouts.db")
+ENV_PATH = APP_DIRECTORY.parents[1] / ".env"
+TEST_URI = "sqlite:///" + str(APP_DIRECTORY / "data" / "test_workouts.db")
+
 logger = logging.getLogger(__name__)
 
 db = SQLAlchemy()

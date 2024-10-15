@@ -1,9 +1,9 @@
 import logging
-import pathlib
 
 from flask import Blueprint, render_template
 from sqlalchemy import select
 
+from backend.server.config import APP_DIRECTORY
 from backend.server.config import db, cache
 from backend.server.models.ExerciseDB import ExerciseDB
 from backend.server.models.WorkoutDB import WorkoutDB, workoutsDB_to_dict
@@ -65,8 +65,8 @@ def new_exercise_entries(values: list[ExerciseDB]):
 @database_bp.route("/load")
 def initialize_db():
     # purely initializing DB with stored workouts, NOT updating old entries
-    cwd = pathlib.Path.cwd()
-    Datafile = cwd.parent / "src" / "data" / "workout_data.json"
+    app_directory = APP_DIRECTORY.parent
+    Datafile = app_directory.parent / "src" / "data" / "workout_data.json"
     workouts = Manager.load_workouts(str(Datafile))
     new_workout_entries(workouts)
 

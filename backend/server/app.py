@@ -1,22 +1,14 @@
-import logging
-
-from flask import render_template
-
 from backend.server import create_app
 from backend.server.config import db, cache, BaseConfig
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+APP_CONFIG = BaseConfig()
 
-app = create_app(db, cache, app_config=BaseConfig())
+app = create_app(db, cache, app_config=APP_CONFIG)
 
 
-@app.route("/")
-def hello():
-    return "Hello, world!"
+def main():
+    create_app(db, cache, app_config=APP_CONFIG)
 
 
-@app.errorhandler(404)
-def not_found(*args, **kwargs):
-    return render_template("not_found.html", msg="Not Found"), 404
+if __name__ == "__main__":
+    main()
