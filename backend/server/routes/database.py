@@ -3,7 +3,7 @@ import logging
 from flask import Blueprint, render_template
 from sqlalchemy import select
 
-from backend.server.config import APP_DIRECTORY
+from backend.server import APP_DIRECTORY
 from backend.server.config import db, cache
 from backend.server.models.ExerciseDB import ExerciseDB
 from backend.server.models.WorkoutDB import WorkoutDB, workoutsDB_to_dict

@@ -43,6 +43,7 @@ def _format_DB_exercise_names(values: list | str) -> list[str] | str:
 # obfuscate admin routes w/ pokemon
 # clear: clefairy
 # record categories for exercises: caterpie
+# TODO: remove routes for prod
 
 
 @admin_bp.route("/clefairy")

@@ -1,12 +1,12 @@
 import logging
-import pathlib
 
 import dotenv
 from flask_caching import Cache
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
-APP_DIRECTORY = pathlib.Path(__file__).parent.resolve()
+from backend.server import APP_DIRECTORY
+
 DB_URI = "sqlite:///" + str(APP_DIRECTORY / "data" / "workouts.db")
 ENV_PATH = APP_DIRECTORY.parents[1] / ".env"
 TEST_URI = "sqlite:///" + str(APP_DIRECTORY / "data" / "test_workouts.db")

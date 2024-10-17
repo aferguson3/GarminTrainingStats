@@ -10,7 +10,7 @@ from typing import Tuple
 import garth
 from dotenv import dotenv_values
 
-from backend.server.config import APP_DIRECTORY
+from backend.server import APP_DIRECTORY
 from backend.src.WorkoutManagement import WorkoutManagement as Manager
 from backend.src.models import Workout, ExerciseSet
 from backend.src.utils import Endpoints
