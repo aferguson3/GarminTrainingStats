@@ -1,58 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<meta charset="UTF-8"/>
+<meta charset="UTF-8" />
 <head>
-	<title>{% block title %} Workout Progression {% endblock %} </title>
-	{% import './macros/_css_styles.html' as css_styles %}
-	{{ css_styles.meta() }}
-	{{ css_styles.setup() }}
+  <title>{% block title %} Workout Progression {% endblock %}</title>
+  {% import './macros/_css_styles.html' as css_styles %} {{ css_styles.meta()
+  }} {{ css_styles.setup() }}
 </head>
 
 <body>
-<div id="main-content">
-	{% import './macros/_navbar.html' as navbar %}
-	{{ navbar.content() }}
-	<div class="max-w-fit px-5 py-5" id="submit-form">
-		<form class="grid grid-cols-1 gap-3 max-w-fit" id="exercise-form" method="post">
-			{{ muscle_group_field.csrf_token }}
-			<div class="text-2xl w-fit max-w-full" id="header">
-				<span>Workout Progression</span>
-			</div>
-			<label id="categories_label" class="block">
-				<span>Muscle Group</span>
-				{{ muscle_group_field.categories(class="rounded") }}
-			</label>
-			<label class="block" id="exercises_label">
-				<span>Exercise</span>
-				<select
-						class="rounded"
-						id="exercises"
-						name="exercises"
-						required
-				></select>
-			</label>
-			<label class="block" id="rep_ranges_label">
-				<span>Target Reps Filter</span>
-				<select
-						class="rounded"
-						id="rep_ranges"
-						name="rep_ranges"
-						required
-				></select>
-			</label>
-			<button class="rounded bg-gray-100 items-start block border px-2 py-2 w-fit border-2 hover:cursor-pointer"
-					id="submit-btn"
-					type="submit">
-				Submit
-			</button>
-		</form>
-	</div>
-	<script src="{{ url_for('static',filename='js/graph.js') }}" type="text/javascript"></script>
-	<div hidden id="exercise-results">
-		<label for="exercise_info"></label>
-		<input id="exercise_info"
-			   value="{{exercise_info}}"/>
-	</div>
+{% import './macros/_navbar.html' as navbar %} {{ navbar.content() }}
+
+<div class="px-5 py-5" id="content">
+  <div class="w-fit pb-5 text-2xl">
+    <span>Workout Progression</span>
+  </div>
+  <form class="max-w-fit" id="exercise-form" method="post">
+    {{ muscle_group_field.csrf_token }}
+    <div class="grid grid-cols-1 gap-3" id="fields">
+      <label id="categories_label">
+        <span>Muscle Group</span>
+        {{ muscle_group_field.categories(class="rounded w-36", required="") }}
+      </label>
+      <label id="exercises_label">
+        <span>Exercise</span>
+        <select
+          class="w-36 rounded"
+          id="exercises"
+          name="exercises"
+          required
+        ></select>
+      </label>
+      <label id="rep_ranges_label">
+        <span>Target Reps</span>
+        <select
+          class="w-36 rounded"
+          id="rep_ranges"
+          name="rep_ranges"
+          required
+        ></select>
+      </label>
+    </div>
+    <button
+      class="my-3 block w-full items-start rounded border-2 bg-gray-100 px-2 py-2 hover:cursor-pointer"
+      id="submit-btn"
+      type="submit"
+    >
+      <span>Submit</span>
+    </button>
+  </form>
+</div>
+<script
+  src="{{ url_for('static',filename='js/graph.js') }}"
+  type="text/javascript"
+></script>
+<div hidden id="exercise-results">
+  <label for="exercise_info"></label>
+  <input id="exercise_info" value="{{exercise_info}}" />
 </div>
 </body>
 </html>

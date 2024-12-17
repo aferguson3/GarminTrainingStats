@@ -44,5 +44,5 @@ def create_app(
 
 
 if __name__ == "__main__":
-    app = create_app(db, cache, uri_type="TEST_DB",app_config='debug')
+    app = create_app(db, cache, uri_type="TEST_DB", app_config="debug")
     app.run(debug=True)

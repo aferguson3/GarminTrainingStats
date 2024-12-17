@@ -1,20 +1,20 @@
 * {
-    /* CSS HEX */
-    --ivory: #F5F9E9ff; /* oklch(97.48% 0.0214 118.21) */
-    --spanish-orange: #F26417ff; /* oklch(67.4% 0.1913 43.07) */
-    --rose-quartz: #A88FACff; /* oklch(68.21% 0.0506 321.64) */
-    --pumpkin: #FF8C42ff; /* oklch(75.36% 0.16365923886484923 50.400874358102314) */
-    --dark-slate-gray: #36453Bff; /* oklch(37.39% 0.0257 155.78) */
+  /* CSS HEX */
+  --ivory: #f5f9e9ff; /* oklch(97.48% 0.0214 118.21) */
+  --spanish-orange: #f26417ff; /* oklch(67.4% 0.1913 43.07) */
+  --rose-quartz: #a88facff; /* oklch(68.21% 0.0506 321.64) */
+  --pumpkin: #ff8c42ff; /* oklch(75.36% 0.16365923886484923 50.400874358102314) */
+  --dark-slate-gray: #36453bff; /* oklch(37.39% 0.0257 155.78) */
 
-    --sky-blue: #7dbbc3ff;
-    --tea-green: #daedbdff;
-    --buff: #e5b181ff;
-    --melon: #f4b9b2ff;
-    --burnt-sienna: #de6b48ff;
+  --sky-blue: #7dbbc3ff;
+  --tea-green: #daedbdff;
+  --buff: #e5b181ff;
+  --melon: #f4b9b2ff;
+  --burnt-sienna: #de6b48ff;
 
-    --icterine: #faf68cff;
-    --dark-goldenrod: #ab831dff;
-    --satin-sheen-gold: #c2982fff;
-    --gamboge: #e8a23aff;
-    --straw: #cad45fff;
+  --icterine: #faf68cff;
+  --dark-goldenrod: #ab831dff;
+  --satin-sheen-gold: #c2982fff;
+  --gamboge: #e8a23aff;
+  --straw: #cad45fff;
 }

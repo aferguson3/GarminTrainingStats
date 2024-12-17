@@ -63,6 +63,12 @@ def new_muscle_maps(values: list[MuscleMapDB]):
     db.session.commit()
 
 
+def retrieve_muscle_map_entries() -> list[MuscleMapDB]:
+    return (
+        (db.session.execute(select(MuscleMapDB))).scalars().all()
+    )
+
+
 def set_muscle_categories(values: list[MuscleMapDB]):
     for value in values:
         # noinspection PyTypeChecker

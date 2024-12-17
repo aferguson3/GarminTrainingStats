@@ -1,40 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <meta charset="UTF-8"/>
 <head>
-	<title>{% block title %} Login {% endblock %} </title>
-	{% import './macros/_css_styles.html' as css_styles %}
-	{{ css_styles.meta() }}
-	{{ css_styles.setup() }}
+	<title>{% block title %} Login {% endblock %}</title>
+	{% import './macros/_css_styles.html' as css_styles %} {{ css_styles.meta()
+	}} {{ css_styles.setup() }}
 </head>
 
 <body>
-{% block content %}
-<div id="main-content">
-	{% import './macros/_navbar.html' as navbar %}
-	{{ navbar.content() }}
-	<div class="mt-10 w-80 mx-auto border-2 border-black" id="login-container">
-		<div class="form header">
-			<h1 class="text-center m-5 text-2xl">Login</h1>
-		</div>
-		<form class="gap-6 bg-white/50 grid grid-cols-1 mb-5" id="login-form" method="post">
-			{{ form.csrf_token }}
-			<label class="block px-5">
-				<span>Email</span>
-				<input class="block w-full border-2 rounded bg-gray-100" name="email" placeholder="example@email.com"
-					   type="text">
-			</label>
-
-			<label class="block px-5">
-				<span>Password</span>
-				<input class="block w-full border-2 rounded bg-gray-100" name="password" required type="password">
-			</label>
-			<button class="rounded block border px-2 py-2 w-fit mx-auto bg-gray-100 border-2 hover:cursor-pointer"
-					type="submit">Submit
-			</button>
-		</form>
+{% block content %} {% import './macros/_navbar.html' as navbar %} {{
+navbar.content() }}
+<div class="mx-auto mt-10 w-80 border-2 border-black" id="login-container">
+	<div class="form header">
+		<h1 class="m-5 text-center text-2xl">Login</h1>
 	</div>
+	<form
+			class="mb-5 grid grid-cols-1 gap-6 bg-white/50"
+			id="login-form"
+			method="post"
+	>
+		{{ form.csrf_token }}
+		<label class="block px-5">
+			<span>Email</span>
+			<input
+					class="block w-full rounded border-2 bg-gray-100"
+					name="email"
+					placeholder="example@email.com"
+					type="text"
+			/>
+		</label>
+
+		<label class="block px-5">
+			<span>Password</span>
+			<input
+					class="block w-full rounded border-2 bg-gray-100"
+					name="password"
+					required
+					type="password"
+			/>
+		</label>
+		<button
+				class="mx-auto block w-fit rounded border-2 bg-gray-100 px-2 py-2 hover:cursor-pointer"
+				type="submit"
+		>
+			Submit
+		</button>
+	</form>
 </div>
+
 {% endblock %}
 </body>
 </html>

@@ -11,7 +11,7 @@ from backend.server.config import db, cache
 from backend.server.models import WorkoutDB
 from backend.server.models.MuscleMapDB import MuscleMapDB
 from backend.server.models.forms import ExerciseMappingForm, LoginForm
-from backend.server.routes.database import new_workout_entries
+from backend.server.routes.database import new_workout_entries, retrieve_muscle_map_entries
 from backend.server.utils import get_sets_df, get_exercise_info
 from backend.src.dataframe_accessors import (
     list_available_exercises,
@@ -127,9 +127,7 @@ def setup_graph():
 
     fitness_select_form = ExerciseMappingForm()
     if cache.get("exercise_info") is None:
-        muscle_map_entries: list[MuscleMapDB] = (
-            (db.session.execute(select(MuscleMapDB))).scalars().all()
-        )
+        muscle_map_entries: list[MuscleMapDB] = retrieve_muscle_map_entries()
         all_muscle_maps = {
             _dict["exerciseName"]: _dict["category"]
             for _dict in [record.get_dict() for record in muscle_map_entries]
@@ -138,15 +136,10 @@ def setup_graph():
         exercise_info = get_exercise_info(all_exercise_names, df, all_muscle_maps)
     else:
         exercise_info = cache.get("exercise_info")
-        logging.debug('Cache used for key: exercise_info')
+        logging.debug("Cache used for key: exercise_info")
 
     if fitness_select_form.is_submitted():
-        if any(
-                request.form.get(val) == ""
-                for val in ["categories", "exercises", "rep_ranges"]
-        ):
-            logger.debug("Submission prevented -- null graph param(s)")
-        else:
+        if _validate_args(request.form.to_dict()) == 0:
             session["exercise"] = request.form.get("exercises")
             session["reps"] = request.form.get("rep_ranges")
             return redirect(url_for(".show_graph"))
@@ -158,10 +151,22 @@ def setup_graph():
     )
 
 
+def _validate_args(form: dict)-> int:
+    status = 0
+    if "categories" not in form.keys() or "exercises" not in form.keys() or "rep_ranges" not in form.keys():
+        status= 1
+    elif form.get("categories") == "" or form.get("exercises") == "" or form.get("rep_ranges") == "":
+        logger.debug("Submission prevented -- null graph param(s)")
+        status=2
+    return status
+
 @service_bp.route("/graph/show", methods=["GET"])
 def show_graph():
     exercise = session["exercise"]
-    reps = float(session["reps"]) if session["reps"] != "None" else None
+    if str(session["reps"]).isdigit():
+        reps = int(session["reps"])
+    else:
+        reps = None
     plot_dataframe(
         get_sets_df(), exercise, reps, flask_mode=True, filepath=str(GRAPH_FILE)
     )

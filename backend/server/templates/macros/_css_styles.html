@@ -1,10 +1,13 @@
 {% macro meta() %}
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-{% endmacro %}
-{% macro setup() %}
-<script crossorigin="anonymous"
+{% endmacro %} {% macro setup() %}
+<script
+		crossorigin="anonymous"
 		integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq"
-		src="https://unpkg.com/htmx.org@2.0.3"></script>
-<link href=" {{ url_for('static', filename='css/tailwind.css') }}" rel="stylesheet">
-<link href=" {{ url_for('static', filename='css/hamburger.css') }}" rel="stylesheet">
+		src="https://unpkg.com/htmx.org@2.0.3"
+></script>
+<link
+		href=" {{ url_for('static', filename='css/tailwind.css') }}"
+		rel="stylesheet"
+/>
 {% endmacro %}

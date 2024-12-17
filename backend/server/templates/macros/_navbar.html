@@ -1,46 +1,56 @@
 {% macro content() %}
-<header id="navbar">
-	<nav class="flex items-center bg-background w-screen h-15 px-5 border-b-2 border-b-black max-sm:justify-between">
-		<div class="text-primary w-fit pe-5 cursor-pointer" id="home"><a href="/">
-			LiftJourney</a>
+<header class="sticky top-0 z-50 bg-background shadow-md" id="navbar">
+	<nav
+			class="flex h-15 w-screen items-center border-b-2 border-b-black px-5 max-sm:justify-between"
+	>
+		<div class="w-fit cursor-pointer pe-5 text-primary" id="home-page">
+			<a href="/">LiftJourney</a>
 		</div>
-		<ul class="max-sm:hidden w-fit flex gap-5 text-primary" hx-boost="true" hx-push-url="true"
-			id="nav-links">
-			{% import './macros/_navlinks.html' as nav %}
-			{{ nav.links() }}
+		<ul
+				class="flex w-fit gap-5 text-primary max-sm:hidden"
+				hx-boost="true"
+				hx-push-url="true"
+				id="desktop-links"
+		>
+			{% import './macros/_navlinks.html' as nav %} {{ nav.links() }}
 		</ul>
-		<div class="flex max-sm:visible invisible ml-auto w-8 h-8">
-			<button class="w-full h-full bg-transparent cursor-pointer" hx-on:click="toggleMenu()">
-				<svg fill="none" viewBox="-0.5 0 25 25" xmlns="http://www.w3.org/2000/svg">
-					<g id="SVGRepo_iconCarrier">
-						<path d="M2 12.32H22" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
-							  stroke-width="1.5"></path>
-						<path d="M2 18.32H22" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
-							  stroke-width="1.5"></path>
-						<path d="M2 6.32001H22" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
-							  stroke-width="1.5"></path>
-					</g>
+		<div
+				class="invisible ml-auto flex h-8 w-8 max-sm:visible"
+				id="desktop-menu"
+		>
+			<button
+					class="h-full w-full cursor-pointer bg-transparent"
+					hx-on:click="document.getElementById('mobile-menu').toggleAttribute('hidden')"
+			>
+				<svg
+						class="h-6 w-6"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+						xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+							d="M4 6h16M4 12h16M4 18h16"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+					></path>
 				</svg>
 			</button>
 		</div>
 	</nav>
+	<nav
+			class="sticky h-fit w-screen items-center py-3"
+			hidden
+			id="mobile-menu"
+	>
+		<ul
+				class="grid w-full grid-cols-1 justify-items-start gap-3 px-5 text-base text-primary"
+				hx-boost="true"
+				hx-push-url="true"
+		>
+			{{ nav.links() }}
+		</ul>
+	</nav>
 </header>
-
-<div class="bg-dark-slate-gray items-center py-3 w-screen max-h-fit" id="ham-menu-links" style="display:none">
-	<ul class="w-full grid grid-cols-1 gap-3 text-base text-primary justify-items-start px-5" hx-boost="true"
-		hx-push-url="true">
-		{{ nav.links() }}
-	</ul>
-</div>
-<script>
-	function toggleMenu() {
-		let x = document.getElementById("ham-menu-links");
-		if (x.style.display === "none") {
-			x.style.display = "grid"
-		} else {
-			x.style.display = "none"
-		}
-	}
-</script>
 {% endmacro %}
-
