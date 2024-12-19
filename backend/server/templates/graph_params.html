@@ -1,61 +1,63 @@
 <!doctype html>
 <html lang="en">
-<meta charset="UTF-8" />
-<head>
-  <title>{% block title %} Workout Progression {% endblock %}</title>
-  {% import './macros/_css_styles.html' as css_styles %} {{ css_styles.meta()
-  }} {{ css_styles.setup() }}
-</head>
+  <meta charset="UTF-8" />
+  <head>
+    <title>{% block title %} Workout Progression {% endblock %}</title>
+    {% import './macros/_css_styles.html' as css_styles %} {{ css_styles.meta()
+    }} {{ css_styles.setup() }}
+  </head>
 
-<body>
-{% import './macros/_navbar.html' as navbar %} {{ navbar.content() }}
+  <body>
+    {% import './macros/_navbar.html' as navbar %} {{ navbar.content() }}
+    <div class="" id="content">
+      <div class="w-fit p-5 pb-0 text-2xl">
+        <span>Workout Progression</span>
+      </div>
 
-<div class="px-5 py-5" id="content">
-  <div class="w-fit pb-5 text-2xl">
-    <span>Workout Progression</span>
-  </div>
-  <form class="max-w-fit" id="exercise-form" method="post">
-    {{ muscle_group_field.csrf_token }}
-    <div class="grid grid-cols-1 gap-3" id="fields">
-      <label id="categories_label">
-        <span>Muscle Group</span>
-        {{ muscle_group_field.categories(class="rounded w-36", required="") }}
-      </label>
-      <label id="exercises_label">
-        <span>Exercise</span>
-        <select
-          class="w-36 rounded"
-          id="exercises"
-          name="exercises"
-          required
-        ></select>
-      </label>
-      <label id="rep_ranges_label">
-        <span>Target Reps</span>
-        <select
-          class="w-36 rounded"
-          id="rep_ranges"
-          name="rep_ranges"
-          required
-        ></select>
-      </label>
+      <form class="max-w-60 p-5" id="exercise-form" method="post">
+        {{ muscle_group_field.csrf_token }}
+        <div class="grid grid-cols-1 justify-items-start gap-3" id="fields">
+          <label id="categories_label" class="w-full">
+            <span class="block">Category</span>
+            {{ muscle_group_field.categories(class="rounded w-full",
+            required="") }}
+          </label>
+          <label id="exercises_label" class="w-full">
+            <span class="block">Exercise</span>
+            <select
+              class="w-full rounded"
+              id="exercises"
+              name="exercises"
+              required
+            ></select>
+          </label>
+          <label id="rep_ranges_label" class="w-full">
+            <span class="block">Target Reps</span>
+            <select
+              class="w-full rounded"
+              id="rep_ranges"
+              name="rep_ranges"
+              required
+            ></select>
+          </label>
+        </div>
+        <button
+          class="my-5 w-full rounded border-2 bg-gray-100 px-2 py-2 hover:cursor-pointer"
+          id="submit-btn"
+          type="submit"
+        >
+          <span>Submit</span>
+        </button>
+      </form>
     </div>
-    <button
-      class="my-3 block w-full items-start rounded border-2 bg-gray-100 px-2 py-2 hover:cursor-pointer"
-      id="submit-btn"
-      type="submit"
-    >
-      <span>Submit</span>
-    </button>
-  </form>
-</div>
-<script
-  src="{{ url_for('static',filename='js/graph.js') }}"
-  type="text/javascript"
-></script>
-<div hidden id="exercise-results">
-  <label for="exercise_info"></label>
-  <input id="exercise_info" value="{{exercise_info}}" />
-</div>
-</body>
+
+    <script
+      src="{{ url_for('static',filename='js/graph.js') }}"
+      type="text/javascript"
+    ></script>
+    <div hidden id="exercise-results">
+      <label for="exercise_info"></label>
+      <input id="exercise_info" value="{{exercise_info}}" />
+    </div>
+  </body>
 </html>

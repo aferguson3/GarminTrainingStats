@@ -45,7 +45,7 @@ def plot_dataframe(
     targetReps: int = None,
     flask_mode: bool = False,
     filepath: str = None,
-) -> None:
+) -> None | str:
     # plot the reps and weight of like exercisesNames
     if plotting_exercise not in df["exerciseName"].values:
         raise ValueError(f"Exercise {plotting_exercise} is not in df")
@@ -72,7 +72,8 @@ def plot_dataframe(
         fig = make_subplots(2, 1, shared_xaxes=True)
         filepath_validation(filepath)
         _setup_plot_formatting(plot_df, plotting_exercise, flask_mode, fig=fig)
-        write_html(fig, file=filepath)
+        graph_results = write_html(fig, file=filepath, include_plotlyjs='False',div_id='plotly_graph', full_html=False)
+        return graph_results
 
 
 def _setup_plot_formatting(

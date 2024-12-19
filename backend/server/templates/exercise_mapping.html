@@ -1,44 +1,44 @@
 <!doctype html>
 <html lang="en">
-<meta charset="UTF-8"/>
-<head>
-	<title>Muscle Mappings</title>
-	{% import './macros/_css_styles.html' as css_styles %} {{ css_styles.meta()
-	}} {{ css_styles.setup() }}
-</head>
-<body>
-{% import './macros/_navbar.html' as navbar %} {{ navbar.content() }}
-<div class="m-5" id="exercise-list">
-	<form class="space-y-5 px-5 py-3" method="post">
-		{{ muscle_group_field.csrf_token }}
-		<div class="flex flex-row items-center gap-8 max-w-96" id="form-header">
-			<h1 class="text-2xl w-fit">Set Muscle Mappings</h1>
-			<button
-					class="rounded block px-2 py-2 w-fit max-w-fit bg-gray-100 border-2 hover:cursor-pointer"
-					id="submit-exercises"
-					type="submit"
-			>
-				Submit
-			</button>
-		</div>
-		<div class="overflow-y-auto max-w-fit max-h-96" id="mappings-container">
-			<div
-					class="w-fit h-full grid grid-flow-row gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-					id="mappings"
-			>
-				{%- for cur_exercise in exercises -%}
-				<label class="" id="{{cur_exercise}}">
-					<span>{{cur_exercise}}</span>
-					<select class="w-full rounded" name="{{cur_exercise}}">
-						{% for name, value in muscle_group_field.categories.choices %}
-						<option name="{{name}}">{{value}}</option>
-						{% endfor %}
-					</select>
-				</label>
-				{% endfor %}
-			</div>
-		</div>
-	</form>
-</div>
-</body>
+  <meta charset="UTF-8" />
+  <head>
+    <title>Muscle Mappings</title>
+    {% import './macros/_css_styles.html' as css_styles %} {{ css_styles.meta()
+    }} {{ css_styles.setup() }}
+  </head>
+  <body>
+    {% import './macros/_navbar.html' as navbar %} {{ navbar.content() }}
+    <div class="m-5" id="exercise-list">
+      <form class="space-y-5 px-5 py-3" method="post">
+        {{ muscle_group_field.csrf_token }}
+        <div class="flex max-w-96 flex-row items-center gap-8" id="form-header">
+          <h1 class="w-fit text-2xl">Set Muscle Mappings</h1>
+          <button
+            class="block w-fit max-w-fit rounded border-2 bg-gray-100 px-2 py-2 hover:cursor-pointer"
+            id="submit-exercises"
+            type="submit"
+          >
+            Submit
+          </button>
+        </div>
+        <div class="max-h-96 max-w-fit overflow-y-auto" id="mappings-container">
+          <div
+            class="grid h-full w-fit grid-flow-row grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+            id="mappings"
+          >
+            {%- for cur_exercise in exercises -%}
+            <label class="" id="{{cur_exercise}}">
+              <span>{{cur_exercise}}</span>
+              <select class="w-full rounded" name="{{cur_exercise}}">
+                {% for name, value in muscle_group_field.categories.choices %}
+                <option name="{{name}}">{{value}}</option>
+                {% endfor %}
+              </select>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
 </html>

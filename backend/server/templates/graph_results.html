@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% import './macros/_css_styles.html' as css_styles %} {{ css_styles.meta()
+    }} {{ css_styles.setup() }}
+    <title>{{ exercise }} Progression</title>
+    <script
+      src="{{ url_for('static', filename='src/plotly-2.35.2.min.js') }}"
+      charset="utf-8"
+    ></script>
+  </head>
+  <body>
+    <div>{{ graph | title }}</div>
+  </body>
+</html>

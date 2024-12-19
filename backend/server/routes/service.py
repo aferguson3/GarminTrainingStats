@@ -154,20 +154,29 @@ def setup_graph():
 def _validate_args(form: dict)-> int:
     status = 0
     if "categories" not in form.keys() or "exercises" not in form.keys() or "rep_ranges" not in form.keys():
-        status= 1
+        status = 1
     elif form.get("categories") == "" or form.get("exercises") == "" or form.get("rep_ranges") == "":
         logger.debug("Submission prevented -- null graph param(s)")
-        status=2
+        status = 2
     return status
 
 @service_bp.route("/graph/show", methods=["GET"])
 def show_graph():
+    try:
+        assert session['exercise']
+        assert session['reps']
+        assert session["exercise"] != ""
+        assert session['reps'] != ''
+    except KeyError or AssertionError:
+        return render_template("base.html", body="400: Bad Request", title='400: Bad Request'), 400
+
     exercise = session["exercise"]
     if str(session["reps"]).isdigit():
         reps = int(session["reps"])
     else:
         reps = None
-    plot_dataframe(
+
+    plotly_div = plot_dataframe(
         get_sets_df(), exercise, reps, flask_mode=True, filepath=str(GRAPH_FILE)
     )
-    return render_template(GRAPH_FILE.name)
+    return render_template("graph_results.html",graph=plotly_div,exercise=str(exercise).replace("_", " ").title())

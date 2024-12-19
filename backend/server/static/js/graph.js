@@ -1,8 +1,5 @@
-exercise_info = function() {
-  return JSON.parse(
-    document.getElementById("exercise_info").value
-  );
-
+exercise_info = function () {
+  return JSON.parse(document.getElementById("exercise_info").value);
 };
 
 function clearSelects() {
@@ -15,8 +12,12 @@ function clearSelects() {
 
 function changeSelects() {
   document.addEventListener("DOMContentLoaded", clearSelects);
-  document.getElementById("categories").addEventListener("change", onCategoryChange);
-  document.getElementById("exercises").addEventListener("change", onExercisesChange);
+  document
+    .getElementById("categories")
+    .addEventListener("change", onCategoryChange);
+  document
+    .getElementById("exercises")
+    .addEventListener("change", onExercisesChange);
 }
 
 function createOption(select_element, text, value) {
@@ -46,9 +47,13 @@ function changeExerciseOptions(category) {
   createOption(exercise_name_select, "", "");
 
   for (let exercise_name in exercise_info_dict) {
-    let display_name = exercise_name.replaceAll("_", " ").toUpperCase();
+    let display_name = exercise_name.replaceAll("_", " ");
     if (exercise_info_dict[exercise_name]["category"] === category) {
-      createOption(exercise_name_select, display_name, exercise_name);
+      createOption(
+        exercise_name_select,
+        toTitleCase(display_name),
+        exercise_name,
+      );
     }
   }
 }
@@ -67,6 +72,12 @@ function changeRepsOptions(exercise_name) {
   for (let i = 0; i < new_rep_ranges.length; i++) {
     createOption(reps_ranges_select, new_rep_ranges[i], new_rep_ranges[i]);
   }
+}
+
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+  });
 }
 
 /* Main */

@@ -1,56 +1,52 @@
 {% macro content() %}
-<header class="sticky top-0 z-50 bg-background shadow-md" id="navbar">
-	<nav
-			class="flex h-15 w-screen items-center border-b-2 border-b-black px-5 max-sm:justify-between"
-	>
-		<div class="w-fit cursor-pointer pe-5 text-primary" id="home-page">
-			<a href="/">LiftJourney</a>
-		</div>
-		<ul
-				class="flex w-fit gap-5 text-primary max-sm:hidden"
-				hx-boost="true"
-				hx-push-url="true"
-				id="desktop-links"
-		>
-			{% import './macros/_navlinks.html' as nav %} {{ nav.links() }}
-		</ul>
-		<div
-				class="invisible ml-auto flex h-8 w-8 max-sm:visible"
-				id="desktop-menu"
-		>
-			<button
-					class="h-full w-full cursor-pointer bg-transparent"
-					hx-on:click="document.getElementById('mobile-menu').toggleAttribute('hidden')"
-			>
-				<svg
-						class="h-6 w-6"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-							d="M4 6h16M4 12h16M4 18h16"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-					></path>
-				</svg>
-			</button>
-		</div>
-	</nav>
-	<nav
-			class="sticky h-fit w-screen items-center py-3"
-			hidden
-			id="mobile-menu"
-	>
-		<ul
-				class="grid w-full grid-cols-1 justify-items-start gap-3 px-5 text-base text-primary"
-				hx-boost="true"
-				hx-push-url="true"
-		>
-			{{ nav.links() }}
-		</ul>
-	</nav>
+<header class="bg-background sticky top-0 z-50 shadow-md" id="navbar">
+  <nav
+    class="h-15 flex w-screen items-center border-b-2 border-b-black px-5 max-sm:justify-between"
+  >
+    <div class="text-primary w-fit cursor-pointer pe-5" id="home-page">
+      <a href="/">LiftJourney</a>
+    </div>
+    <ul
+      class="text-primary flex w-fit gap-5 max-sm:hidden"
+      hx-boost="true"
+      hx-push-url="true"
+      id="desktop-links"
+    >
+      {% import './macros/_navlinks.html' as nav %} {{ nav.links() }}
+    </ul>
+    <div
+      class="invisible ml-auto flex h-8 w-8 max-sm:visible"
+      id="desktop-menu"
+    >
+      <button
+        class="h-full w-full cursor-pointer bg-transparent"
+        hx-on:click="document.getElementById('mobile-menu').toggleAttribute('hidden')"
+      >
+        <svg
+          class="h-8 w-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 6h16M4 12h16M4 18h16"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          ></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  <nav class="sticky h-fit w-screen items-center py-3" hidden id="mobile-menu">
+    <ul
+      class="text-primary grid w-full grid-cols-1 justify-items-start gap-3 px-5 text-base"
+      hx-boost="true"
+      hx-push-url="true"
+    >
+      {{ nav.links() }}
+    </ul>
+  </nav>
 </header>
 {% endmacro %}
